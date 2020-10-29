@@ -1,19 +1,17 @@
 <?php
-$array = array_map('str_getcsv', file('csvData.csv'));
-$header = array_shift($array);
-array_walk($array, '_combine_array', $header);
 
-function _combine_array(&$row, $key, $header)
-{
-    $row = array_combine($header, $row);
-}
+require_once "NetworkPath.php";
+
+$filename = 'csvData.csv';
+$array = array_map('str_getcsv', file($filename));
+
 
 foreach ($array as $arrayKey => $value) {
-    $firstNode = $value['DeviceFrom'];
-    $secondNode = $value['DeviceTo'];
-    $matrixArr[$firstNode][$secondNode] = $value['Latency'];
-    $matrixArr[$secondNode][$firstNode] = $value['Latency'];
+    $firstNode = $value[0];
+    $secondNode = $value[1];
+    $matrixArr[$firstNode][$secondNode] = $value[2];
+    $matrixArr[$secondNode][$firstNode] = $value[2];
 }
 
-var_dump($matrixArr);
-
+$networkPath = new NetworkPath($matrixArr);
+$networkPath->run();

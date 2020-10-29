@@ -2,7 +2,6 @@
 
 class NetworkPath
 {
-    /** @var integer[][] The graph, where $graph[node1][node2]=cost */
     public $graph;
 
     public $distance;
@@ -112,34 +111,45 @@ class NetworkPath
             return $this->extractPaths($target);
         }
     }
+    public function run()
+    {
+        echo "Enter Device From, Device To and Latency separated by spaces (eg: A B 100): ";
+        $input = trim(strtoupper(fgets(STDIN)));
+
+        $result = $this->getResult($input);
+        if ($result) {
+            echo $result . PHP_EOL;
+        }
+
+        $this->checkSelection();
+    }
+
+    public function checkSelection()
+    {
+        echo "Check other devices? (Yes/Quit): ";
+        $input = trim(strtoupper(fgets(STDIN)));
+        if ($input == 'YES') {
+            $this->run();
+        } elseif ($input == 'QUIT') {
+            exit('Have a nice day!');
+        } else {
+            echo 'Invalid selection !!' . PHP_EOL;
+            $this->checkSelection();
+        }
+    }
+    public function getResult($input)
+    {
+        $options = array('A', 'B', 'C', 'D', 'E', 'F');
+        $exploded = explode(" ", $input);
+
+        $first_node = in_array($exploded[0], $options) ? $exploded[0] : exit("Invaild Options");
+        $second_node = in_array($exploded[1], $options) ? $exploded[1] : exit("Invaild Options");
+        $latency_value = is_numeric($exploded[2]) ? $exploded[2] : exit("Invaild Options");
+
+        $path = $this->shortestPaths($first_node, $second_node);
+        $weight =  $this->distance[$second_node];
+        $output = ($weight > $latency_value) ? "Path Not Found" : implode('=>', $path[0]) . "=>" . $weight;
+
+        return $output;
+    }
 }
-
-$array = array_map('str_getcsv', file('csvData.csv'));
-$header = array_shift($array);
-array_walk($array, '_combine_array', $header);
-
-function _combine_array(&$row, $key, $header)
-{
-    $row = array_combine($header, $row);
-}
-
-foreach ($array as $arrayKey => $value) {
-    $firstNode = $value['DeviceFrom'];
-    $secondNode = $value['DeviceTo'];
-    $matrixArr[$firstNode][$secondNode] = $value['Latency'];
-    $matrixArr[$secondNode][$firstNode] = $value['Latency'];
-}
-
-$input = fgets(STDIN);
-$exploded = explode(" ", $input);
-$first_node = $exploded[0];
-$second_node = $exploded[1];
-$latency_value = $exploded[2];
-
-$algorithm = new NetworkPath($matrixArr);
-
-
-$path = $algorithm->shortestPaths($first_node, $second_node);
-$weight =  $algorithm->distance[$second_node];
-$output = ($weight > $latency_value) ? "Path Not Found" : implode('=>', $path[0]) . "=>" . $weight;
-echo $output;
