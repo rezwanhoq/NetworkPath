@@ -27,4 +27,6 @@
 #### Sample output for invalid data:
 	Enter Device From, Device To and Latency (eg: A B 10 followed by ENTER key): ADSLKFJ
 	OUTPUT: Invaild data
-	
+
+	Do you want to continue? (Yes/Quit): kfhf
+	OUTPUT: Invalid selection !!
