@@ -42,13 +42,11 @@ class NetworkPath
                         // An equally short path was found
                         $this->previous[$neighbor][] = $closest;
                         $this->queue[$neighbor] = $this->distance[$neighbor];
-                        
                     }
                 }
             }
         }
         unset($this->queue[$closest]);
-        
     }
 
     /**
@@ -116,19 +114,32 @@ class NetworkPath
     }
 }
 
+$array = array_map('str_getcsv', file('csvData.csv'));
+$header = array_shift($array);
+array_walk($array, '_combine_array', $header);
 
-$matrixArr = array(
-        'A' => array('B' => 10, 'C' => 20),
-        'B' => array('A' => 10, 'D' => 100),
-        'C' => array('A' => 20, 'D' => 30),
-        'D' => array('B' => 100, 'C' => 30, 'E' => 10),
-        'E' => array('D' => 10, 'F' => 1000),
-        'F' => array('E' => 1000)        
-      ); 
-    
-   
+function _combine_array(&$row, $key, $header)
+{
+    $row = array_combine($header, $row);
+}
 
-    $algorithm = new NetworkPath($matrixArr); 
-    $path = $algorithm->shortestPaths('A', 'F');
-    echo $algorithm->distance['F'];
-    var_dump($path);
+foreach ($array as $arrayKey => $value) {
+    $firstNode = $value['DeviceFrom'];
+    $secondNode = $value['DeviceTo'];
+    $matrixArr[$firstNode][$secondNode] = $value['Latency'];
+    $matrixArr[$secondNode][$firstNode] = $value['Latency'];
+}
+
+$input = fgets(STDIN);
+$exploded = explode(" ", $input);
+$first_node = $exploded[0];
+$second_node = $exploded[1];
+$latency_value = $exploded[2];
+
+$algorithm = new NetworkPath($matrixArr);
+
+
+$path = $algorithm->shortestPaths($first_node, $second_node);
+$weight =  $algorithm->distance[$second_node];
+$output = ($weight > $latency_value) ? "Path Not Found" : implode('=>', $path[0]) . "=>" . $weight;
+echo $output;
