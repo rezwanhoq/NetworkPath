@@ -1,4 +1,4 @@
-DeviceFrom,DeviceTo,Latency
+From,To,Latency
 A,B,10
 A,C,20
 B,D,100
