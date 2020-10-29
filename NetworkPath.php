@@ -10,9 +10,6 @@ class NetworkPath
 
     public $queue;
 
-    /**
-     * @param integer[][] $graph
-     */
     public function __construct($graph)
     {
         $this->graph = $graph;
@@ -111,9 +108,13 @@ class NetworkPath
             return $this->extractPaths($target);
         }
     }
+    /**
+     * Excution starts from here
+     * Receives the input from the user
+     */
     public function run()
     {
-        echo "Enter Device From, Device To and Latency separated by spaces (eg: A B 100): ";
+        echo "Enter Device From, Device To and Latency (eg: A B 10 followed by ENTER key): ";
         $input = trim(strtoupper(fgets(STDIN)));
 
         $result = $this->getResult($input);
@@ -123,10 +124,12 @@ class NetworkPath
 
         $this->checkSelection();
     }
-
+    /**
+     * wait for the user input
+     */
     public function checkSelection()
     {
-        echo "Check other devices? (Yes/Quit): ";
+        echo "Do you want to continue? (Yes/Quit): ";
         $input = trim(strtoupper(fgets(STDIN)));
         if ($input == 'YES') {
             $this->run();
@@ -137,6 +140,12 @@ class NetworkPath
             $this->checkSelection();
         }
     }
+    /**
+     * Prepare the result
+     * @param string  $input Soruce, destination and latency seperated by spaces 
+     * 
+     * @return string shortest path with value e.g. A=>C=>D=>E=>F=>1060
+     */
     public function getResult($input)
     {
         $options = array('A', 'B', 'C', 'D', 'E', 'F');
