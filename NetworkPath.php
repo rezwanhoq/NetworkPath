@@ -16,26 +16,20 @@ class NetworkPath
     }
 
     /**
-     * Process the next (i.e. closest) entry in the queue.
-     *
-     * @param string[] $exclude A list of nodes to exclude - for calculating next-shortest paths.
-     *
-     * @return void
+     * Process the next entry in the queue.
+     * @param string[] list of nodes to calculate the next shortest paths.
      */
     public function processNextNodeInQueue(array $exclude)
     {
-        // Process the closest vertex
         $closest = array_search(min($this->queue), $this->queue);
         if (!empty($this->graph[$closest]) && !in_array($closest, $exclude)) {
             foreach ($this->graph[$closest] as $neighbor => $cost) {
                 if (isset($this->distance[$neighbor])) {
                     if ($this->distance[$closest] + $cost < $this->distance[$neighbor]) {
-                        // A shorter path was found
                         $this->distance[$neighbor] = $this->distance[$closest] + $cost;
                         $this->previous[$neighbor] = array($closest);
                         $this->queue[$neighbor] = $this->distance[$neighbor];
                     } elseif ($this->distance[$closest] + $cost === $this->distance[$neighbor]) {
-                        // An equally short path was found
                         $this->previous[$neighbor][] = $closest;
                         $this->queue[$neighbor] = $this->distance[$neighbor];
                     }
@@ -47,9 +41,7 @@ class NetworkPath
 
     /**
      * Extract all the paths from $source to $target as arrays of nodes.
-     *
      * @param string $target The starting node (working backwards)
-     *
      * @return string[][] One or more shortest paths, each represented by a list of nodes
      */
     public function extractPaths($target)
@@ -78,33 +70,23 @@ class NetworkPath
      * @param string   $source  The starting node
      * @param string   $target  The ending node
      * @param string[] $exclude A list of nodes to exclude - for calculating next-shortest paths.
-     *
      * @return string[][] Zero or more shortest paths, each represented by a list of nodes
      */
     public function shortestPaths($source, $target, array $exclude = array())
     {
-        // The shortest distance to all nodes starts with infinity...
         $this->distance = array_fill_keys(array_keys($this->graph), INF);
-        // ...except the start node
         $this->distance[$source] = 0;
-
-        // The previously visited nodes
         $this->previous = array_fill_keys(array_keys($this->graph), array());
-
-        // Process all nodes in order
         $this->queue = array($source => 0);
         while (!empty($this->queue)) {
             $this->processNextNodeInQueue($exclude);
         }
 
         if ($source === $target) {
-            // A null path
             return array(array($source));
         } elseif (empty($this->previous[$target])) {
-            // No path between $source and $target
             return array();
         } else {
-            // One or more paths were found between $source and $target
             return $this->extractPaths($target);
         }
     }
@@ -143,7 +125,6 @@ class NetworkPath
     /**
      * Prepare the result
      * @param string  $input Soruce, destination and latency seperated by spaces 
-     * 
      * @return string shortest path with value e.g. A=>C=>D=>E=>F=>1060
      */
     public function getResult($input)
