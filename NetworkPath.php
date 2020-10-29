@@ -151,9 +151,9 @@ class NetworkPath
         $options = array('A', 'B', 'C', 'D', 'E', 'F');
         $exploded = explode(" ", $input);
 
-        $first_node = in_array($exploded[0], $options) ? $exploded[0] : exit("Invaild Options");
-        $second_node = in_array($exploded[1], $options) ? $exploded[1] : exit("Invaild Options");
-        $latency_value = is_numeric($exploded[2]) ? $exploded[2] : exit("Invaild Options");
+        $first_node = in_array($exploded[0], $options) ? $exploded[0] : exit("Invaild data");
+        $second_node = in_array($exploded[1], $options) ? $exploded[1] : exit("Invaild data");
+        $latency_value = is_numeric($exploded[2]) ? $exploded[2] : exit("Invaild data");
 
         $path = $this->shortestPaths($first_node, $second_node);
         $weight =  $this->distance[$second_node];
