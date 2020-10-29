@@ -2,6 +2,7 @@
 
 class NetworkPath
 {
+    /** @var integer[][] The graph, where $graph[node1][node2]=cost */
     public $graph;
 
     public $distance;
@@ -116,17 +117,18 @@ class NetworkPath
 }
 
 
-    $graph = array(
+$matrixArr = array(
         'A' => array('B' => 10, 'C' => 20),
         'B' => array('A' => 10, 'D' => 100),
         'C' => array('A' => 20, 'D' => 30),
         'D' => array('B' => 100, 'C' => 30, 'E' => 10),
         'E' => array('D' => 10, 'F' => 1000),
-        'F' => array('E' => 1000),
-        'G' => array(),
+        'F' => array('E' => 1000)        
       ); 
     
-    $algorithm = new NetworkPath($graph); 
-    $path = $algorithm->shortestPaths('D', 'A');
-    echo $algorithm->distance['A'];
+   
+
+    $algorithm = new NetworkPath($matrixArr); 
+    $path = $algorithm->shortestPaths('A', 'F');
+    echo $algorithm->distance['F'];
     var_dump($path);
